@@ -34,7 +34,8 @@ database.ref().on("child_added", function(snapshot) {
 		var nTrain = moment().add(timeLeft, "minutes");
 		console.log("nTrain: " + nTrain);
 
-		var nTrainCon2 = moment().format(nTrain, "hh:mm a");
+		var fTrainCon2 = fTrainCon.format("hh:mm a");
+		var nTrainCon2 = nTrain.format("hh:mm a");
 
 		var newRow = $("<tr>");
 		var newName = $("<td>");
@@ -46,7 +47,7 @@ database.ref().on("child_added", function(snapshot) {
 
 		newName.text(tName);
 		newFreq.text(tFreq);
-		newTrain.text(fTrainCon);
+		newTrain.text(fTrainCon2);
 		newDest.text(destination);
 		tLeft.text(timeLeft);
 		nextTrain.text(nTrainCon2);
@@ -59,7 +60,7 @@ database.ref().on("child_added", function(snapshot) {
 });
 
 $("#submit-btn").on("click", function(e){
-	e.preventDefault();
+	// e.preventDefault();
 	var trainName = $("#name-input").val().trim();
 	var trainFreq = $("#trainFreq-input").val().trim();
 	var trainFirst = $("#fTrain-input").val().trim();
