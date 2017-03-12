@@ -19,8 +19,11 @@ database.ref().on("child_added", function(snapshot) {
 		var fTrain = snapshot.val().fTrain;
 		var desination = snapshot.val().desination;
 
+		console.log("tFreq: " + moment().minute(tFreq));
+		console.log("fTrain: " + moment(fTrain, "hh:mm").subtract(1, "years"));
+
 		var now = moment();
-		var totalTime = now.diff(moment(fTrain, "minutes"));
+		var totalTime = now.diff(moment(fTrain), "minutes");
 		console.log("totalTime: " + totalTime);
 		var timeTaken = totalTime % tFreq;
 		console.log("timeTaken: " + timeTaken);
