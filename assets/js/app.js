@@ -10,6 +10,8 @@ firebase.initializeApp(config);
 
 var database = firebase.database();
 
+
+
 database.ref().on("child_added", function(snapshot) {
 	if ((snapshot.child("name").exists()) && (snapshot.child("desination").exists())) {
 		var tName = snapshot.val().name;
@@ -17,18 +19,33 @@ database.ref().on("child_added", function(snapshot) {
 		var fTrain = snapshot.val().fTrain;
 		var desination = snapshot.val().desination;
 
+		var now = moment();
+		var totalTime = now.diff(moment(fTrain, "minutes"));
+		console.log("totalTime: " + totalTime);
+		var timeTaken = totalTime % tFreq;
+		console.log("timeTaken: " + timeTaken);
+		var timeLeft = totalTime - timeTaken;
+		console.log("timeLeft: " + timeLeft);
+		var nTrain = moment().add(timeLeft);
+		console.log("nTrain: " + nTrain);
+
+
 		var newRow = $("<tr>");
 		var newName = $("<td>");
 		var newFreq = $("<td>");
 		var newTrain = $("<td>");
 		var newDest = $("<td>");
+		var tLeft = $("<td>");
+		var nextTrain = $("<td>");
 
 		newName.text(tName);
 		newFreq.text(tFreq);
 		newTrain.text(fTrain);
 		newDest.text(desination);
+		tLeft.text(timeLeft);
+		nextTrain.text(nTrain);
 
-		newRow.append(newName, newFreq, newTrain, newDest);
+		newRow.append(newName, newDest, newFreq, nextTrain, tLeft, newTrain);
 		$("#train-table").append(newRow);
 	}
 }, function(err) {
@@ -42,10 +59,10 @@ $("#submit-btn").on("click", function(e){
 	var trainFirst = $("#fTrain-input").val().trim();
 	var trainDest = $("#destination-input").val().trim();
 
-	var now = moment(new Date());
-	var end = moment();
-
 	database.ref().push({
-
+		name: trainName,
+		frequency: trainFreq,
+		fTrain: trainFirst,
+		desination: trainDest
 	})
 });
