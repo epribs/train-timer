@@ -13,25 +13,28 @@ var database = firebase.database();
 
 
 database.ref().on("child_added", function(snapshot) {
-	if ((snapshot.child("name").exists()) && (snapshot.child("desination").exists())) {
+	if ((snapshot.child("name").exists()) && (snapshot.child("destination").exists())) {
 		var tName = snapshot.val().name;
-		var tFreq = snapshot.val().frequency;
-		var fTrain = snapshot.val().fTrain;
-		var desination = snapshot.val().desination;
+		var tFreq = moment().format(snapshot.val().frequency, "mm");
+		var fTrain = moment().format(snapshot.val().fTrain, "hh:mm");
+		var destination = snapshot.val().destination;
 
-		console.log("tFreq: " + moment().minute(tFreq));
-		console.log("fTrain: " + moment(fTrain, "hh:mm").subtract(1, "years"));
 
-		var now = moment();
-		var totalTime = now.diff(moment(fTrain), "minutes");
+		var fTrainCon = moment(fTrain, "hh:mm").subtract(1, "years");
+		console.log("tFreq: " + tFreq);
+		console.log("fTrain: " + fTrainCon);
+
+		
+		var totalTime = moment().diff(moment(fTrainCon), "minutes");
 		console.log("totalTime: " + totalTime);
 		var timeTaken = totalTime % tFreq;
 		console.log("timeTaken: " + timeTaken);
-		var timeLeft = totalTime - timeTaken;
+		var timeLeft = tFreq - timeTaken;
 		console.log("timeLeft: " + timeLeft);
-		var nTrain = moment().add(timeLeft);
+		var nTrain = moment().add(timeLeft, "minutes");
 		console.log("nTrain: " + nTrain);
 
+		var nTrainCon2 = moment().format(nTrain, "hh:mm a");
 
 		var newRow = $("<tr>");
 		var newName = $("<td>");
@@ -43,10 +46,10 @@ database.ref().on("child_added", function(snapshot) {
 
 		newName.text(tName);
 		newFreq.text(tFreq);
-		newTrain.text(fTrain);
-		newDest.text(desination);
+		newTrain.text(fTrainCon);
+		newDest.text(destination);
 		tLeft.text(timeLeft);
-		nextTrain.text(nTrain);
+		nextTrain.text(nTrainCon2);
 
 		newRow.append(newName, newDest, newFreq, nextTrain, tLeft, newTrain);
 		$("#train-table").append(newRow);
@@ -66,6 +69,6 @@ $("#submit-btn").on("click", function(e){
 		name: trainName,
 		frequency: trainFreq,
 		fTrain: trainFirst,
-		desination: trainDest
+		destination: trainDest
 	})
 });
